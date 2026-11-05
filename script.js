@@ -13,6 +13,7 @@ menuButton.addEventListener('click', () => {
   menuButton.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
 });
 mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
+window.addEventListener('resize', () => { if (window.innerWidth > 760 && !mobileMenu.hidden) closeMobileMenu(); });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && !mobileMenu.hidden) { closeMobileMenu(); menuButton.focus(); }
 });
