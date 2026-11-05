@@ -1,4 +1,4 @@
-# Café del Barrio — Landing V1.0
+# Café del Barrio — Landing V1.1
 
 Web conceptual en español para una cafetería ficticia. Proyecto estático HTML + CSS + JS, sin base de datos ni cuentas de usuario.
 
@@ -10,3 +10,6 @@ En GitHub, abre Settings → Pages, configura **Deploy from a branch**, rama **m
 
 ## Observaciones
 Los productos y precios son ficticios. No se muestran direcciones, teléfonos ni reseñas falsas. Las imágenes utilizan Unsplash y las fuentes Google Fonts. En un establecimiento real hay que verificar los datos y avisos legales antes de publicar.
+
+## V1.1
+Mejoras de identidad gráfica, fotografía principal centrada en el café, sugerencias fotográficas en la carta, cartel conceptual de ubicación y menú móvil optimizado.
