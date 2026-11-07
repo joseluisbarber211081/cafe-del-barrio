@@ -29,3 +29,48 @@ tabs.forEach(tab => tab.addEventListener('click', () => {
   items.forEach(item => { item.hidden = filter !== 'todos' && item.dataset.category !== filter; });
 }));
 document.querySelector('#year').textContent = new Date().getFullYear();
+// Formulario local: validación únicamente, sin red, almacenamiento ni envío.
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+  const status = document.getElementById('contact-status');
+  const fields = ['name', 'email', 'subject', 'message'];
+  const errors = {
+    name: 'Introduce tu nombre.',
+    email: 'Introduce una dirección de correo válida.',
+    subject: 'Selecciona el asunto de tu mensaje.',
+    message: 'Escribe al menos 10 caracteres en tu mensaje.'
+  };
+  const validate = (name) => {
+    const field = contactForm.elements.namedItem(name);
+    const value = field.value.trim();
+    let valid = Boolean(value);
+    if (name === 'email') valid = valid && field.validity.valid && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+    if (name === 'message') valid = value.length >= 10;
+    field.setAttribute('aria-invalid', String(!valid));
+    document.getElementById('error-' + name).textContent = valid ? '' : errors[name];
+    return valid;
+  };
+  fields.forEach((name) => {
+    const field = contactForm.elements.namedItem(name);
+    field.addEventListener(name === 'subject' ? 'change' : 'input', () => {
+      if (field.getAttribute('aria-invalid') === 'true') validate(name);
+      status.textContent = '';
+      status.className = '';
+    });
+  });
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const failures = fields.filter(name => !validate(name));
+    if (failures.length) {
+      status.className = 'error';
+      status.textContent = 'Revisa los campos marcados antes de continuar.';
+      contactForm.elements.namedItem(failures[0]).focus();
+      return;
+    }
+    status.className = 'success';
+    status.textContent = 'Demostración completada. No se ha enviado ni guardado ningún mensaje.';
+    contactForm.reset();
+    fields.forEach(name => contactForm.elements.namedItem(name).removeAttribute('aria-invalid'));
+    status.focus();
+  });
+}
