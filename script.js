@@ -44,7 +44,7 @@ if (contactForm) {
     const field = contactForm.elements.namedItem(name);
     const value = field.value.trim();
     let valid = Boolean(value);
-    if (name === 'email') valid = valid && field.validity.valid && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+    if (name === 'email') valid = valid && field.validity.valid && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     if (name === 'message') valid = value.length >= 10;
     field.setAttribute('aria-invalid', String(!valid));
     document.getElementById('error-' + name).textContent = valid ? '' : errors[name];
