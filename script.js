@@ -29,7 +29,7 @@ tabs.forEach(tab => tab.addEventListener('click', () => {
   items.forEach(item => { item.hidden = filter !== 'todos' && item.dataset.category !== filter; });
 }));
 document.querySelector('#year').textContent = new Date().getFullYear();
-// Formulario local: validación únicamente, sin red, almacenamiento ni envío.
+// Validación en cliente y envío real mediante FormSubmit AJAX.
 const contactForm = document.getElementById('contact-form');
 if (contactForm) {
   const status = document.getElementById('contact-status');
@@ -58,8 +58,12 @@ if (contactForm) {
       status.className = '';
     });
   });
-  contactForm.addEventListener('submit', (event) => {
+  let sending = false;
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const formEndpoint = 'https://formsubmit.co/ajax/joseluisbarber211081@gmail.com';
+  contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (sending) return;
     const failures = fields.filter(name => !validate(name));
     if (failures.length) {
       status.className = 'error';
@@ -67,10 +71,51 @@ if (contactForm) {
       contactForm.elements.namedItem(failures[0]).focus();
       return;
     }
-    status.className = 'success';
-    status.textContent = 'Demostración completada. No se ha enviado ni guardado ningún mensaje.';
-    contactForm.reset();
-    fields.forEach(name => contactForm.elements.namedItem(name).removeAttribute('aria-invalid'));
-    status.focus();
+    if (contactForm.elements.namedItem('_honey').value) return;
+    const values = Object.fromEntries(fields.map(name => [name, contactForm.elements.namedItem(name).value.trim()]));
+    const labels = { consulta: 'Consulta general', carta: 'Carta y productos', otro: 'Otro asunto' };
+    const subject = labels[values.subject] || values.subject;
+    sending = true;
+    submitButton.disabled = true;
+    status.className = '';
+    status.textContent = 'Enviando tu mensaje…';
+    try {
+      const response = await fetch(formEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          nombre: values.name,
+          email: values.email,
+          asunto: subject,
+          mensaje: values.message,
+          _subject: 'Café del Barrio · ' + subject + ' · ' + values.name,
+          _replyto: values.email,
+          _template: 'table',
+          _captcha: 'false',
+          _honey: ''
+        })
+      });
+      const data = await response.json().catch(() => null);
+      const responseText = String(data && data.message || '').toLowerCase();
+      if (responseText.includes('activat') || responseText.includes('activar')) {
+        status.className = 'error';
+        status.textContent = 'El formulario está pendiente de activación: revisa el correo de confirmación de FormSubmit. Tu mensaje sigue escrito para que puedas intentarlo más tarde.';
+      } else if (response.ok && data && (data.success === true || data.success === 'true')) {
+        status.className = 'success';
+        status.textContent = 'Mensaje aceptado por FormSubmit. Gracias por escribirnos.';
+        contactForm.reset();
+        fields.forEach(name => contactForm.elements.namedItem(name).removeAttribute('aria-invalid'));
+      } else {
+        status.className = 'error';
+        status.textContent = 'El servicio no ha podido procesar el mensaje. Vuelve a intentarlo; tus datos siguen en el formulario.';
+      }
+    } catch {
+      status.className = 'error';
+      status.textContent = 'No se pudo conectar con el servicio de envío. Comprueba tu conexión; tus datos siguen en el formulario.';
+    } finally {
+      sending = false;
+      submitButton.disabled = false;
+      status.focus();
+    }
   });
 }
