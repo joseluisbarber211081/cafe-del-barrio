@@ -1,4 +1,4 @@
-# Café del Barrio — Landing V1.2
+# Café del Barrio — Landing V1.3
 
 Web conceptual en español para una cafetería ficticia. Proyecto estático HTML + CSS + JS, sin base de datos ni cuentas de usuario.
 
@@ -16,3 +16,4 @@ Mejoras de identidad gráfica, fotografía principal centrada en el café, suger
 
 ## V1.2
 Formulario de contacto demostrativo con validación accesible, sin backend, envío ni persistencia de datos. Responsive para PC y móvil.
+\n## V1.3\nFormulario conectado mediante FormSubmit AJAX al correo configurado por el titular, con estados de envío y errores. Requiere activación del destinatario por email y prueba de recepción real. Este repositorio mantiene la versión estática para GitHub Pages; Lovable usa otra base de código (React/TypeScript). La sincronización bidireccional exige conectar GitHub desde Lovable en Project settings → Git.\n
